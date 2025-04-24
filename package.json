@@ -1,6 +1,7 @@
 {
   "devDependencies": {
-    "tailwindcss": "^4.1.4"
+    "tailwindcss": "^4.1.4",
+    "react-scripts": "^5.0.0"
   },
   "dependencies": {
     "dayjs": "^1.11.13",
@@ -12,5 +13,11 @@
     "react-use": "^17.6.0",
     "sound": "^3.1.0",
     "use-sound": "^5.0.0"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
   }
 }
