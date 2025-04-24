@@ -180,7 +180,7 @@ export default function App() {
               transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
               className="text-6xl font-bold text-pink-700 drop-shadow-2xl"
             >
-              🎉 Happy Birthday Kiznaiver 💖
+              🎉 Happy Birthday Kittu 💖
             </motion.h1>
 
             <motion.p
