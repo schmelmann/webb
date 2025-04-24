@@ -4,6 +4,7 @@ import { Card, CardContent } from "./components/ui/card";
 import { Button } from "./components/ui/button";
 import { Input } from "./components/ui/input";
 import { motion, AnimatePresence } from "framer-motion";
+import Confetti from "react-confetti"; // For confetti animation
 
 const TOTAL_DAYS = 31;
 const START_DATE = new Date("2025-04-20");
@@ -27,14 +28,15 @@ const finaleMessage =
 
 const birthdayAudio = new Audio("/sounds/welcome.mp3");
 birthdayAudio.loop = true;
-birthdayAudio.volume = 1; // Set volume lower to avoid restrictions
+birthdayAudio.volume = 0.1;
 
 export default function App() {
   const [dayIndex, setDayIndex] = useState(0);
   const [mediaMap, setMediaMap] = useState({});
   const [direction, setDirection] = useState(1);
   const [showWelcome, setShowWelcome] = useState(true);
-  const [isMusicPlaying, setIsMusicPlaying] = useState(false); // Track music state
+  const [isMusicPlaying, setIsMusicPlaying] = useState(false);
+  const [audioPausedAt, setAudioPausedAt] = useState(0); // Track the time when music was paused
 
   useEffect(() => {
     const loadMedia = async () => {
@@ -51,8 +53,24 @@ export default function App() {
   }, []);
 
   const handlePlayMusic = () => {
+    if (audioPausedAt > 0) {
+      birthdayAudio.currentTime = audioPausedAt;
+    }
     birthdayAudio.play().catch((e) => console.log("Autoplay failed:", e));
-    setIsMusicPlaying(true); // Set music as playing when the button is clicked
+    setIsMusicPlaying(true);
+  };
+
+  const handleStopMusic = () => {
+    birthdayAudio.pause();
+    setAudioPausedAt(birthdayAudio.currentTime); // Save the current time when paused
+    setIsMusicPlaying(false);
+  };
+
+  const handleResetMusic = () => {
+    birthdayAudio.pause();
+    birthdayAudio.currentTime = 0; // Reset the song
+    setAudioPausedAt(0);
+    setIsMusicPlaying(false);
   };
 
   const handleMediaChange = async (e, index) => {
@@ -69,15 +87,15 @@ export default function App() {
 
   const renderMedia = (media) => {
     if (!media) return null;
-    if (media.type.startsWith("image/")) {
-      return <img src={media.url} alt="Uploaded" className="w-full rounded-xl shadow" />;
-    } else if (media.type.startsWith("video/")) {
+    if (media.type.startsWith("image")) {
+      return <img src={media.url} alt="Uploaded" className="w-full rounded-xl shadow hover:scale-105 transition-transform" />;
+    } else if (media.type.startsWith("video")) {
       return (
-        <video controls className="w-full rounded-xl shadow">
+        <video controls className="w-full rounded-xl shadow hover:scale-105 transition-transform">
           <source src={media.url} type={media.type} />
         </video>
       );
-    } else if (media.type.startsWith("audio/")) {
+    } else if (media.type.startsWith("audio")) {
       return (
         <audio controls className="w-full mt-2">
           <source src={media.url} type={media.type} />
@@ -198,7 +216,7 @@ export default function App() {
 
                 <Input
                   type="file"
-                  accept="image/*,video/*,audio/*"
+                  accept="image/,video/,audio/*"
                   onChange={(e) => handleMediaChange(e, dayIndex)}
                   className="mt-2"
                 />
@@ -218,12 +236,38 @@ export default function App() {
           </motion.div>
         </AnimatePresence>
 
-        {/* Play Music Button */}
-        {!isMusicPlaying && (
-          <Button onClick={handlePlayMusic} className="mt-6">
-            Play Music 🎶
-          </Button>
-        )}
+        {/* Play, Stop, and Reset Music Buttons */}
+        <div className="flex justify-center space-x-4">
+          {!isMusicPlaying && (
+            <Button onClick={handlePlayMusic} className="mt-6">
+              Play Music 🎶
+            </Button>
+          )}
+
+          {isMusicPlaying && (
+            <>
+              <Button onClick={handleStopMusic} className="mt-6">
+                Stop Music 🛑
+              </Button>
+              <Button onClick={handleResetMusic} className="mt-6">
+                Reset Music 🔄
+              </Button>
+            </>
+          )}
+        </div>
+
+        {/* Day Progress */}
+        <div className="relative mt-4">
+          <div className="w-full bg-gray-200 h-2 rounded-lg">
+            <div
+              style={{ width: `${(dayIndex + 1) / TOTAL_DAYS * 100}%` }}
+              className="bg-pink-600 h-2 rounded-lg"
+            ></div>
+          </div>
+          <p className="text-center text-sm mt-2">
+            {dayIndex + 1} of {TOTAL_DAYS} days
+          </p>
+        </div>
 
         {/* Navigation */}
         <div className="flex justify-between pt-4">
@@ -232,22 +276,22 @@ export default function App() {
               setDirection(-1);
               setDayIndex((i) => Math.max(i - 1, 0));
             }}
-            disabled={dayIndex === 0}
           >
-            ⬅ Previous
+            Previous Day
           </Button>
-
           <Button
             onClick={() => {
               setDirection(1);
               setDayIndex((i) => Math.min(i + 1, TOTAL_DAYS - 1));
             }}
-            disabled={dayIndex === TOTAL_DAYS - 1}
           >
-            Next ➡
+            Next Day
           </Button>
         </div>
       </div>
+
+      {/* Confetti on final day */}
+      {dayIndex === TOTAL_DAYS - 1 && <Confetti />}
     </div>
   );
 }
