@@ -30,6 +30,9 @@ const birthdayAudio = new Audio("/sounds/welcome.mp3");
 birthdayAudio.loop = true;
 birthdayAudio.volume = 0.1;
 
+// Max file size in bytes (10 MB = 10 * 1024 * 1024 bytes)
+const MAX_FILE_SIZE = 10 * 1024 * 1024;
+
 export default function App() {
   const [dayIndex, setDayIndex] = useState(0);
   const [mediaMap, setMediaMap] = useState({});
@@ -76,6 +79,13 @@ export default function App() {
   const handleMediaChange = async (e, index) => {
     const file = e.target.files[0];
     if (!file) return;
+
+    // Check if the file size exceeds the limit
+    if (file.size > MAX_FILE_SIZE) {
+      alert("File is too large. Maximum allowed size is 10MB.");
+      return;
+    }
+
     const reader = new FileReader();
     reader.onloadend = async () => {
       const data = { url: reader.result, type: file.type };
