@@ -1,14 +1,13 @@
 import { useState, useEffect } from "react";
-import { set, get } from "idb-keyval";
+import { set, get, del } from "idb-keyval";
 import { Card, CardContent } from "./components/ui/card";
 import { Button } from "./components/ui/button";
 import { Input } from "./components/ui/input";
 import { motion, AnimatePresence } from "framer-motion";
-import Confetti from "react-confetti"; // For confetti animation
+import Confetti from "react-confetti";
 
 const TOTAL_DAYS = 31;
 const START_DATE = new Date("2025-04-20");
-const END_DATE = new Date("2025-05-20");
 
 const loveMessages = [
   "You're my sunshine.", "Your smile lights up my world.", "Can't wait to hug you.",
@@ -30,28 +29,24 @@ const birthdayAudio = new Audio("/sounds/welcome.mp3");
 birthdayAudio.loop = true;
 birthdayAudio.volume = 0.1;
 
-// Max file size in bytes (10 MB = 10 * 1024 * 1024 bytes)
-const MAX_FILE_SIZE = 10 * 1024 * 1024;
-
 export default function App() {
   const [dayIndex, setDayIndex] = useState(0);
   const [mediaMap, setMediaMap] = useState({});
   const [direction, setDirection] = useState(1);
   const [showWelcome, setShowWelcome] = useState(true);
   const [isMusicPlaying, setIsMusicPlaying] = useState(false);
-  const [audioPausedAt, setAudioPausedAt] = useState(0); // Track the time when music was paused
+  const [audioPausedAt, setAudioPausedAt] = useState(0);
 
   useEffect(() => {
     const loadMedia = async () => {
       let loaded = {};
       for (let i = 0; i < TOTAL_DAYS; i++) {
-        const data = await get(`media-day-${i}`);
-        if (data) loaded[i] = data;
+        await del(`media-day-${i}`); // Remove any existing media
       }
-      setMediaMap(loaded);
+      setMediaMap({});
     };
-    loadMedia();
 
+    loadMedia();
     setTimeout(() => setShowWelcome(false), 4000);
   }, []);
 
@@ -65,13 +60,13 @@ export default function App() {
 
   const handleStopMusic = () => {
     birthdayAudio.pause();
-    setAudioPausedAt(birthdayAudio.currentTime); // Save the current time when paused
+    setAudioPausedAt(birthdayAudio.currentTime);
     setIsMusicPlaying(false);
   };
 
   const handleResetMusic = () => {
     birthdayAudio.pause();
-    birthdayAudio.currentTime = 0; // Reset the song
+    birthdayAudio.currentTime = 0;
     setAudioPausedAt(0);
     setIsMusicPlaying(false);
   };
@@ -80,9 +75,13 @@ export default function App() {
     const file = e.target.files[0];
     if (!file) return;
 
-    // Check if the file size exceeds the limit
-    if (file.size > MAX_FILE_SIZE) {
-      alert("File is too large. Maximum allowed size is 10MB.");
+    // Limit file size: max 5MB for image/video, 2MB for audio
+    const sizeMB = file.size / (1024 * 1024);
+    if (
+      (file.type.startsWith("image") || file.type.startsWith("video")) && sizeMB > 5 ||
+      file.type.startsWith("audio") && sizeMB > 2
+    ) {
+      alert("File too large. Images/videos max 5MB. Audio max 2MB.");
       return;
     }
 
@@ -138,13 +137,8 @@ export default function App() {
 
   return (
     <div className="relative min-h-screen p-6 font-serif text-ink overflow-hidden">
-      {/* Blurred full background image */}
-      <div
-        className="fixed inset-0 z-0 bg-cover bg-center blur-md"
-        style={{ backgroundImage: `url('/IMG_3219.jpg')` }}
-      />
+      <div className="fixed inset-0 z-0 bg-cover bg-center blur-md" style={{ backgroundImage: `url('/IMG_3219.jpg')` }} />
 
-      {/* Welcome animation */}
       <AnimatePresence>
         {showWelcome && (
           <motion.div
@@ -173,29 +167,21 @@ export default function App() {
                 {["💖", "💘", "💕", "❤", "💗"][Math.floor(Math.random() * 5)]}
               </motion.div>
             ))}
-
             <motion.h1
               initial={{ scale: 0.5 }}
               animate={{ scale: [1, 1.1, 1], rotate: [0, 2, -2, 0] }}
-              transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
+              transition={{ repeat: Infinity, duration: 1.5 }}
               className="text-6xl font-bold text-pink-700 drop-shadow-2xl"
             >
-              🎉 Happy Birthday Kittu 💖
+              🎉 Happy Birthday Kiznaiver 💖
             </motion.h1>
-
-            <motion.p
-              className="mt-4 text-xl text-pink-600"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 1 }}
-            >
+            <motion.p className="mt-4 text-xl text-pink-600" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1 }}>
               Let the magic begin...
             </motion.p>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Main content */}
       <div className="relative z-10 max-w-2xl mx-auto space-y-6">
         <motion.h1
           initial={{ opacity: 0, y: -20 }}
@@ -226,7 +212,7 @@ export default function App() {
 
                 <Input
                   type="file"
-                  accept="image/,video/,audio/*"
+                  accept="image/*,video/*,audio/*"
                   onChange={(e) => handleMediaChange(e, dayIndex)}
                   className="mt-2"
                 />
@@ -246,14 +232,12 @@ export default function App() {
           </motion.div>
         </AnimatePresence>
 
-        {/* Play, Stop, and Reset Music Buttons */}
         <div className="flex justify-center space-x-4">
           {!isMusicPlaying && (
             <Button onClick={handlePlayMusic} className="mt-6">
               Play Music 🎶
             </Button>
           )}
-
           {isMusicPlaying && (
             <>
               <Button onClick={handleStopMusic} className="mt-6">
@@ -266,11 +250,10 @@ export default function App() {
           )}
         </div>
 
-        {/* Day Progress */}
         <div className="relative mt-4">
           <div className="w-full bg-gray-200 h-2 rounded-lg">
             <div
-              style={{ width: `${(dayIndex + 1) / TOTAL_DAYS * 100}%` }}
+              style={{ width: `${((dayIndex + 1) / TOTAL_DAYS) * 100}%` }}
               className="bg-pink-600 h-2 rounded-lg"
             ></div>
           </div>
@@ -279,7 +262,6 @@ export default function App() {
           </p>
         </div>
 
-        {/* Navigation */}
         <div className="flex justify-between pt-4">
           <Button
             onClick={() => {
@@ -300,7 +282,6 @@ export default function App() {
         </div>
       </div>
 
-      {/* Confetti on final day */}
       {dayIndex === TOTAL_DAYS - 1 && <Confetti />}
     </div>
   );
