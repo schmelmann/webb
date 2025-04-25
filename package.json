@@ -5,6 +5,8 @@
   "description": "This project was bootstrapped with Create React App.",
   "main": "index.js",
   "scripts": {
+    "install-go": "nvm install 1.19 && nvm use 1.19",
+    "build": "npm run install-go && react-scripts build && go build -o myapp",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
