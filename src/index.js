@@ -1,8 +1,8 @@
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import './index.css';
 import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
+import ReactDOM from 'react-dom';
+import './styles/tailwind.css'; // Make sure this path is correct
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
@@ -11,6 +11,7 @@ root.render(
   <React.StrictMode>
     <App />
   </React.StrictMode>
+  document.getElementById('root')
 );
 
 // If you want to start measuring performance in your app, pass a function
