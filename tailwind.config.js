@@ -1,21 +1,10 @@
-/** @type {import('tailwindcss').Config} */
+// tailwind.config.js
 module.exports = {
   content: [
-    "./src/**/*.{js,jsx,ts,tsx}",
+    "./src/**/*.{html,js,jsx,ts,tsx}", // Adjust the paths to your files
   ],
   theme: {
-    extend: {
-      fontFamily: {
-        story: ['"Cormorant Garamond"', 'serif'],
-      },
-      backgroundImage: {
-        'storybook': "url('https://www.transparenttextures.com/patterns/paper-fibers.png')",
-      },
-      colors: {
-        parchment: '#fdf6e3',
-        ink: '#4b2e2e',
-      },
-    },
+    extend: {},
   },
   plugins: [],
-}
+};
