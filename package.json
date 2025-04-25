@@ -1,31 +1,14 @@
 {
-<<<<<<< HEAD
   "name": "birthday-countdown",
   "version": "0.1.0",
   "private": true,
-=======
-  "devDependencies": {
-    "tailwindcss": "^4.1.4",
-    "react-scripts": "^5.0.0"
-  },
-  "dependencies": {
-    "dayjs": "^1.11.13",
-    "idb-keyval": "^6.2.1",
-    "react": "^19.1.0",
-    "react-confetti": "^6.4.0",
-    "react-dom": "^19.1.0",
-    "react-router-dom": "^7.5.1",
-    "react-use": "^17.6.0",
-    "sound": "^3.1.0",
-    "use-sound": "^5.0.0"
-  },
->>>>>>> 2dd9a343bcbcb31d851a7954bae252dabbb3d1ec
+  "description": "This project was bootstrapped with Create React App.",
+  "main": "index.js",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
-<<<<<<< HEAD
   },
   "dependencies": {
     "@testing-library/dom": "^10.4.0",
@@ -35,13 +18,17 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
-    "dayjs": "^1.11.10",
+    "dayjs": "^1.11.13",
     "framer-motion": "^12.8.0",
+    "idb-keyval": "^6.2.1",
     "lucide-react": "^0.503.0",
     "react": "^19.1.0",
+    "react-confetti": "^6.4.0",
     "react-dom": "^19.1.0",
     "react-router-dom": "^7.5.1",
     "react-scripts": "^5.0.1",
+    "react-use": "^17.6.0",
+    "sound": "^3.1.0",
     "tailwind-merge": "^3.2.0",
     "tw-animate-css": "^1.2.8",
     "use-sound": "^5.0.0",
@@ -52,7 +39,8 @@
     "gh-pages": "^6.3.0",
     "npm-force-resolutions": "^0.0.10",
     "postcss": "^8.5.3",
-    "tailwindcss": "^3.4.17"
+    "react-scripts": "^5.0.0",
+    "tailwindcss": "^4.1.4"
   },
   "eslintConfig": {
     "extends": [
@@ -72,12 +60,7 @@
       "last 1 safari version"
     ]
   },
-  "description": "This project was bootstrapped with Create React App.",
-  "main": "index.js",
   "keywords": [],
   "author": "",
   "license": "ISC"
-=======
-  }
->>>>>>> 2dd9a343bcbcb31d851a7954bae252dabbb3d1ec
 }
